@@ -1,0 +1,254 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.app{max-width:420px;margin:0 auto;padding:16px}
+.header{background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:16px;padding:24px;text-align:center;margin-bottom:20px}
+.header h1{color:#FFD700;font-size:22px;font-weight:500;margin-bottom:4px}
+.header p{color:#aaa;font-size:13px}
+.scissors{font-size:32px;margin-bottom:8px}
+.section-title{font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:12px}
+.services{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
+.service-card{background:var(--color-background-secondary);border:2px solid var(--color-border-tertiary);border-radius:12px;padding:14px 8px;text-align:center;cursor:pointer;transition:all .2s}
+.service-card.selected{border-color:#FFD700;background:#1a1a2e}
+.service-card.selected .s-name{color:#FFD700}
+.service-card.selected .s-price{color:#FFD700}
+.service-icon{font-size:24px;margin-bottom:6px}
+.s-name{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.s-price{font-size:13px;font-weight:500;color:var(--color-text-secondary)}
+.calendar{background:var(--color-background-secondary);border-radius:12px;padding:16px;margin-bottom:20px}
+.cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cal-nav{background:none;border:1px solid var(--color-border-tertiary);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:16px;color:var(--color-text-primary)}
+.cal-month{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px}
+.cal-day-name{text-align:center;font-size:11px;color:var(--color-text-secondary);padding:4px 0}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-day{text-align:center;padding:8px 4px;border-radius:8px;font-size:13px;cursor:pointer;color:var(--color-text-primary)}
+.cal-day.empty{cursor:default}
+.cal-day.past{color:var(--color-text-tertiary);cursor:not-allowed}
+.cal-day.available:hover{background:#FFD70033}
+.cal-day.selected{background:#FFD700;color:#1a1a2e;font-weight:500}
+.cal-day.today{border:1px solid #FFD700}
+.times{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px}
+.time-btn{background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);border-radius:8px;padding:10px 4px;text-align:center;font-size:12px;cursor:pointer;color:var(--color-text-primary);transition:all .2s}
+.time-btn.selected{background:#FFD700;color:#1a1a2e;font-weight:500;border-color:#FFD700}
+.time-btn.busy{color:var(--color-text-tertiary);cursor:not-allowed;text-decoration:line-through}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:13px;color:var(--color-text-secondary);margin-bottom:6px}
+.form-group input{width:100%;padding:12px;border:1px solid var(--color-border-tertiary);border-radius:8px;font-size:14px;background:var(--color-background-secondary);color:var(--color-text-primary)}
+.form-group input:focus{outline:none;border-color:#FFD700}
+.btn-agendar{width:100%;padding:16px;background:#FFD700;color:#1a1a2e;border:none;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer;margin-top:4px;transition:opacity .2s}
+.btn-agendar:disabled{opacity:.4;cursor:not-allowed}
+.btn-agendar:hover:not(:disabled){opacity:.9}
+.success{background:#1a1a2e;border:2px solid #FFD700;border-radius:16px;padding:32px 20px;text-align:center;display:none}
+.success h2{color:#FFD700;font-size:20px;margin-bottom:8px}
+.success p{color:#ccc;font-size:13px;line-height:1.6;margin-bottom:16px}
+.success .detail{background:#ffffff11;border-radius:10px;padding:14px;margin-bottom:16px;text-align:left}
+.success .detail div{font-size:13px;color:#ddd;padding:4px 0;display:flex;gap:8px}
+.success .detail span{color:#FFD700}
+.btn-novo{background:none;border:2px solid #FFD700;color:#FFD700;padding:12px 24px;border-radius:10px;cursor:pointer;font-size:14px}
+.step-indicator{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.step{width:8px;height:8px;border-radius:50%;background:var(--color-border-tertiary)}
+.step.active{background:#FFD700;width:24px;border-radius:4px}
+</style>
+
+<div class="app">
+  <div class="header">
+    <div class="scissors">✂️</div>
+    <h1>Paulo Cabeleireiro</h1>
+    <p>Agende seu horário online</p>
+  </div>
+
+  <div id="mainForm">
+    <div class="step-indicator">
+      <div class="step active" id="s1"></div>
+      <div class="step" id="s2"></div>
+      <div class="step" id="s3"></div>
+    </div>
+
+    <p class="section-title">Escolha o serviço</p>
+    <div class="services">
+      <div class="service-card" onclick="selectService(this,'Corte Masculino','R$ 35')">
+        <div class="service-icon">💈</div>
+        <div class="s-name">Corte Masculino</div>
+        <div class="s-price">R$ 35</div>
+      </div>
+      <div class="service-card" onclick="selectService(this,'Corte Infantil','R$ 25')">
+        <div class="service-icon">👦</div>
+        <div class="s-name">Corte Infantil</div>
+        <div class="s-price">R$ 25</div>
+      </div>
+      <div class="service-card" onclick="selectService(this,'Barba','R$ 20')">
+        <div class="service-icon">🧔</div>
+        <div class="s-name">Barba</div>
+        <div class="s-price">R$ 20</div>
+      </div>
+    </div>
+
+    <p class="section-title">Escolha o dia</p>
+    <div class="calendar">
+      <div class="cal-header">
+        <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
+        <span class="cal-month" id="calMonth"></span>
+        <button class="cal-nav" onclick="changeMonth(1)">›</button>
+      </div>
+      <div class="cal-days-header">
+        <div class="cal-day-name">D</div>
+        <div class="cal-day-name">S</div>
+        <div class="cal-day-name">T</div>
+        <div class="cal-day-name">Q</div>
+        <div class="cal-day-name">Q</div>
+        <div class="cal-day-name">S</div>
+        <div class="cal-day-name">S</div>
+      </div>
+      <div class="cal-days" id="calDays"></div>
+    </div>
+
+    <div id="timesSection" style="display:none">
+      <p class="section-title">Escolha o horário</p>
+      <div class="times" id="timesGrid"></div>
+    </div>
+
+    <div id="formSection" style="display:none">
+      <p class="section-title">Seus dados</p>
+      <div class="form-group">
+        <label>Nome completo</label>
+        <input type="text" id="clientName" placeholder="Digite seu nome">
+      </div>
+      <div class="form-group">
+        <label>WhatsApp</label>
+        <input type="tel" id="clientPhone" placeholder="(19) 9 9999-9999">
+      </div>
+      <button class="btn-agendar" id="btnAgendar" onclick="confirmar()" disabled>Confirmar agendamento</button>
+    </div>
+  </div>
+
+  <div class="success" id="successMsg">
+    <div style="font-size:48px;margin-bottom:12px">✅</div>
+    <h2>Agendado!</h2>
+    <p>Seu horário está confirmado. Paulo entrará em contato pelo WhatsApp para confirmar.</p>
+    <div class="detail" id="successDetail"></div>
+    <button class="btn-novo" onclick="resetForm()">Fazer novo agendamento</button>
+  </div>
+</div>
+
+<script>
+let selService='',selServicePrice='',selDay=null,selTime='';
+let curYear,curMonth;
+const today=new Date();
+const months=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const busySlots={'2':['09:00','11:00'],'5':['14:00','15:00']};
+const times=['08:00','09:00','10:00','11:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00'];
+curYear=today.getFullYear();curMonth=today.getMonth();
+renderCal();checkForm();
+
+function renderCal(){
+  document.getElementById('calMonth').textContent=months[curMonth]+' '+curYear;
+  const grid=document.getElementById('calDays');
+  grid.innerHTML='';
+  const first=new Date(curYear,curMonth,1).getDay();
+  const daysInMonth=new Date(curYear,curMonth+1,0).getDate();
+  for(let i=0;i<first;i++){const d=document.createElement('div');d.className='cal-day empty';grid.appendChild(d);}
+  for(let d=1;d<=daysInMonth;d++){
+    const el=document.createElement('div');
+    const dt=new Date(curYear,curMonth,d);
+    const isPast=dt<new Date(today.getFullYear(),today.getMonth(),today.getDate());
+    const isSun=dt.getDay()===0;
+    const isToday=dt.toDateString()===today.toDateString();
+    const isSelected=selDay&&selDay.getDate()===d&&selDay.getMonth()===curMonth&&selDay.getFullYear()===curYear;
+    if(isPast||isSun){el.className='cal-day past';}
+    else{el.className='cal-day available'+(isSelected?' selected':'')+(isToday?' today':'');el.onclick=()=>selectDay(d);}
+    el.textContent=d;
+    grid.appendChild(el);
+  }
+}
+
+function changeMonth(dir){
+  curMonth+=dir;
+  if(curMonth>11){curMonth=0;curYear++;}
+  if(curMonth<0){curMonth=11;curYear--;}
+  renderCal();
+}
+
+function selectService(el,name,price){
+  document.querySelectorAll('.service-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selService=name;selServicePrice=price;
+  updateSteps();checkForm();
+}
+
+function selectDay(d){
+  selDay=new Date(curYear,curMonth,d);
+  selTime='';
+  renderCal();
+  const sec=document.getElementById('timesSection');
+  sec.style.display='block';
+  const grid=document.getElementById('timesGrid');
+  grid.innerHTML='';
+  const key=String(selDay.getDay());
+  const busy=busySlots[key]||[];
+  times.forEach(t=>{
+    const btn=document.createElement('div');
+    const isBusy=busy.includes(t);
+    btn.className='time-btn'+(isBusy?' busy':'');
+    btn.textContent=t;
+    if(!isBusy)btn.onclick=()=>selectTime(t,btn);
+    grid.appendChild(btn);
+  });
+  updateSteps();checkForm();
+}
+
+function selectTime(t,btn){
+  document.querySelectorAll('.time-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selTime=t;
+  document.getElementById('formSection').style.display='block';
+  updateSteps();checkForm();
+}
+
+function updateSteps(){
+  document.getElementById('s1').className='step'+(selService?' active':'');
+  document.getElementById('s2').className='step'+(selDay?' active':'');
+  document.getElementById('s3').className='step'+(selTime?' active':'');
+}
+
+function checkForm(){
+  const btn=document.getElementById('btnAgendar');
+  if(!btn)return;
+  const name=document.getElementById('clientName');
+  const phone=document.getElementById('clientPhone');
+  if(name&&phone){
+    name.oninput=checkForm;phone.oninput=checkForm;
+    const ok=selService&&selDay&&selTime&&name.value.trim().length>2&&phone.value.trim().length>7;
+    btn.disabled=!ok;
+  }
+}
+
+function confirmar(){
+  const name=document.getElementById('clientName').value.trim();
+  const phone=document.getElementById('clientPhone').value.trim();
+  const dayStr=selDay.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('successDetail').innerHTML=
+    '<div>🧑 <span>Cliente:</span> '+name+'</div>'+
+    '<div>✂️ <span>Serviço:</span> '+selService+'</div>'+
+    '<div>💰 <span>Valor:</span> '+selServicePrice+'</div>'+
+    '<div>📅 <span>Data:</span> '+dayStr+'</div>'+
+    '<div>🕐 <span>Horário:</span> '+selTime+'</div>'+
+    '<div>📱 <span>WhatsApp:</span> '+phone+'</div>';
+  document.getElementById('mainForm').style.display='none';
+  document.getElementById('successMsg').style.display='block';
+}
+
+function resetForm(){
+  selService='';selServicePrice='';selDay=null;selTime='';
+  curYear=today.getFullYear();curMonth=today.getMonth();
+  document.getElementById('mainForm').style.display='block';
+  document.getElementById('successMsg').style.display='none';
+  document.querySelectorAll('.service-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('timesSection').style.display='none';
+  document.getElementById('formSection').style.display='none';
+  document.getElementById('clientName').value='';
+  document.getElementById('clientPhone').value='';
+  updateSteps();renderCal();checkForm();
+}
+</script>
